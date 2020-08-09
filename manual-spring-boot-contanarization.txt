@@ -1,0 +1,26 @@
+	
+#mannually contanarize the spring-boot applicaiton
+-------------------------------------------------------------------------------------------
+step 1 : download jdk-alpine base image and run as container
+
+	docker run -dit openjdk:8-jdk-alpine  
+	
+step 2:create executable/deployable application and copy jar/war into /tmp folder of the existing container container
+
+	docker container cp target\demo-0.0.1-SNAPSHOT.jar 294a599e275dee4f76638be8ff95023d06b6215ad5289e19762d89ea1bf5fccc:/tmp
+	
+step 3:verify the copied jar file
+	docker container exec 294a599e275dee4f76638be8ff95023d06b6215ad5289e19762d89ea1bf5fccc ls /tmp
+step 4:create image from existing container by commiting 
+
+	docker container commit 294a599e275dee4f76638be8ff95023d06b6215ad5289e19762d89ea1bf5fccc dipendrabista/hello-world-sb:v1
+
+step 5:
+	docker container commit --change="CMD exec java -jar /tmp/demo-0.0.1-SNAPSHOT.jar" 294a599e275dee4f76638be8ff95023d06b6215ad5289e19762d89ea1bf5fccc dipendrabista/hello-world-sb:v2
+	
+step 6:run given image as container
+
+	docker run -d -p 8081:8081 dipendrabista/hello-world-sb:v2
+
+step 6: browse application
+	localhost:8081
